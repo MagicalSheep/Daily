@@ -60,6 +60,58 @@ int main()
 
 ## 最长公共子序列
 
+> [P1439 【模板】最长公共子序列](https://www.luogu.com.cn/problem/P1439 "P1439 【模板】最长公共子序列")
+
+对于最长公共子序列，状态可设置为：`f(i, j)`，表示第一个串前i位与第二个串前j位的最长公共子序列长度，则`f(0, 0) = 0`。对于状态转移方程，不难发现`f(i, j)`的值只与`f(i-1, j-1)`、`f(i-1, j)`、`f(i, j-1)`的值有关。其中：
+
+1. 当A1[i] = A2[j]时，可以从这两个串中选择该元素，使公共子序列的长度增加1。即`f(i, j) = f(i-1, j-1) + 1`。
+2. 当A1[i] != A2[j]时，无法从串中选择元素来增加公共子序列的长度，则`f(i, j)`的值只能从前一状态继承。即`f(i, j) = max(f(i-1, j), f(i, j-1))`。
+
+该算法的时间复杂度为`O(n^2)`。
+
+对于P1439题，数据量无法使用`O(n^2)`的算法，注意到两串含有的元素相同，可以考虑使用离散化，将LCS问题转换为LIS问题，从而使用`O(nlogn)`的算法解决。
+
+具体步骤如下：
+
+1. 将A1串离散化为单调递增的序列（保存映射关系到临时数组中）
+2. 根据离散化后的映射关系，重组A2
+3. 求A2的最长上升子序列
+
+这是因为，离散化后的两串仍具有相同长度的最长公共子序列，而由于A1串已是单调递增的序列，因而其公共子序列必单调递增。因此，重组后A2串的最长上升子序列长度即为所求。
+
+```C++
+#include <bits/stdc++.h>
+typedef long long ll;
+using namespace std;
+const int MAXN = 1e5 + 10;
+
+ll n, p1[MAXN], p2[MAXN], m[MAXN];
+
+int main()
+{
+    cin >> n;
+    for (int i = 0; i < n; i++)
+        cin >> p1[i];
+    for (int i = 0; i < n; i++)
+        cin >> p2[i];
+    for (int i = 0; i < n; i++)
+        m[p1[i]] = i;
+    vector<ll> tmp, ans;
+    for (int i = 0; i < n; i++)
+        tmp.emplace_back(m[p2[i]]);
+    ans.emplace_back(tmp[0]);
+    for (int i = 1; i < (int)tmp.size(); i++)
+    {
+        if (ans.back() < tmp[i])
+            ans.emplace_back(tmp[i]);
+        else
+            *lower_bound(ans.begin(), ans.end(), tmp[i]) = tmp[i];
+    }
+    cout << ans.size() << endl;
+    return 0;
+}
+```
+
 ## 最长连续不下降子序列
 
 ## 最长不下降子序列
