@@ -39,24 +39,14 @@ int update(int p, int k, int v)
     return rt;
 }
 
-int query(int p, int s, int t)
+int query(int p, int k) // k-th small
 {
-    if (t < s)
-        return 0;
-    if (tree[p].l >= s && tree[p].r <= t)
-        return tree[p].val;
-    int mid = (tree[p].l + tree[p].r) >> 1;
-    int ans = 0;
-    if (s <= mid)
-        ans += query(tree[p].lson, s, t);
-    if (t > mid)
-        ans += query(tree[p].rson, s, t);
-    return ans;
-}
-
-inline int get_diff_num(int l, int r)
-{
-    return query(rt[r], 1, r) - query(rt[r], 1, l - 1);
+    if (tree[p].l == tree[p].r)
+        return tree[p].l;
+    if (k <= tree[tree[p].lson].val)
+        return query(tree[p].lson, k);
+    else
+        return query(tree[p].rson, k - tree[tree[p].lson].val);
 }
 
 int main()
@@ -64,41 +54,27 @@ int main()
     scanf("%d", &n);
     for (int i = 1; i <= n; i++)
         scanf("%d", &a[i]);
-    rt[0] = build(1, n);
-    for (int i = 1; i <= n; i++)
+    rt[n + 1] = build(1, n + 1); // n + 1
+    for (int i = n; i >= 1; i--)
     {
         if (last[a[i]])
         {
-            rt[i] = update(rt[i - 1], last[a[i]], -1);
+            rt[i] = update(rt[i + 1], last[a[i]], -1);
             rt[i] = update(rt[i], i, 1);
         }
         else
         {
-            rt[i] = update(rt[i - 1], i, 1);
+            rt[i] = update(rt[i + 1], i, 1);
         }
         last[a[i]] = i;
     }
     for (int k = 1; k <= n; k++)
     {
-        int l = 1, r = n, ans = 0;
+        int l = 1, ans = 0;
         while (l <= n)
         {
-            int pl = l, pr = n, rr = 0;
-            while (pl <= pr)
-            {
-                int mid = (pl + pr) >> 1;
-                if (get_diff_num(l, mid) > k)
-                {
-                    pr = mid - 1;
-                }
-                else
-                {
-                    rr = mid;
-                    pl = mid + 1;
-                }
-            }
+            l = query(rt[l], k + 1);
             ans++;
-            l = rr + 1;
         }
         printf("%d ", ans);
     }
