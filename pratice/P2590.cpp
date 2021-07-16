@@ -73,7 +73,7 @@ int getmax(int p, int s, int t)
 struct edge
 {
     int to, next;
-} Edge[MAXN << 1];
+} Edge[MAXN << 1]; // note: this is a double edges graph
 
 void addEdge(int u, int v)
 {
