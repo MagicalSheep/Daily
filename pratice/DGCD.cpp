@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #define lowbit(x) ((x) & (-x))
-typedef long long ll;
+typedef long long ll; // note: all in long long will lead to TLE
 using namespace std;
 const int MAXN = 5e4 + 10;
 
