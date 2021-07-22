@@ -36,7 +36,7 @@ void addEdge(int u, int v)
 int trans(char *ss)
 {
     int len = strlen(ss);
-    int ret = (ss[len - 1] == 'h') ? n - 1 : 0;
+    int ret = (ss[len - 1] == 'h') ? n : 0;
     ss[len - 1] = '\0';
     ret += atoi(ss);
     return ret;
@@ -44,7 +44,7 @@ int trans(char *ss)
 
 int opp(int u)
 {
-    return (u > n - 1) ? u - n + 1 : u + n - 1;
+    return (u > n - 1) ? u - n : u + n;
 }
 
 void tarjan(int u)
@@ -82,7 +82,7 @@ void tarjan(int u)
 void trrans(int &u, char &c)
 {
     if (u > n - 1)
-        c = 'h', u -= n - 1;
+        c = 'h', u -= n;
     else
         c = 'w';
 }
@@ -104,13 +104,15 @@ int main()
             addEdge(xx, opp(yy));
             addEdge(yy, opp(xx));
         }
-        for (int i = 1; i <= 2 * (n - 1); i++)
+        addEdge(0, n); // note: We are dealing with the side of groom. If bride is selected, it can lead to groom to be selected
+        // so groom must in this side
+        for (int i = 0; i <= (2 * n - 1); i++)
             if (!dfn[i])
                 tarjan(i);
         bool flag = true;
         for (int i = 1; i <= n - 1; i++)
         {
-            if (belong[i] == belong[i + n - 1])
+            if (belong[i] == belong[i + n])
             {
                 flag = false;
                 break;
@@ -125,8 +127,8 @@ int main()
         {
             int id;
             char ch;
-            if (belong[i] < belong[i + n - 1])
-                id = i + n - 1;
+            if (belong[i] < belong[i + n])
+                id = i + n;
             else
                 id = i;
             trrans(id, ch);
