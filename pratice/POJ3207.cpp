@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <string.h>
 using namespace std;
-const int MAXN = 1e4 + 10;
+const int MAXN = 1e5 + 10;
 
 int n, m, a[MAXN], b[MAXN];
 int cnt, head[MAXN];
