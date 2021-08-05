@@ -12,7 +12,7 @@ int main()
         scanf("%d%d", &n, &m);
         for (int i = 1; i <= m; i++)
             scanf("%d", &b[i]);
-        if (n == m || (n % 2 == 0 && m == 1 && b[1] == n / 2))
+        if (n == m)
         {
             printf("YES\n");
             continue;
@@ -20,13 +20,13 @@ int main()
         int l, r, left = 0, right = 0;
         bool isok = false;
         sort(b + 1, b + 1 + m);
-        b[m + 1] = 0;
+        b[m + 1] = b[m];
         for (int i = 1; i <= m; i++)
         {
             l = b[i] - i - left;
             r = n - b[i] - (m - i) - right;
             int delta = b[i + 1] - b[i] - 1;
-            if (l == r)
+            if (l == r || l + 1 == r)
             {
                 isok = true;
                 break;
@@ -43,26 +43,19 @@ int main()
                     isok = true;
                     break;
                 }
-                if (delta - right >= 1)
-                {
-                    left += right + 1;
-                    right = 0;
-                }
-                else
-                {
-                    right += 1;
-                }
+                left = n - r - m;
+                right = 0;
                 continue;
             }
-            if (l <= delta)
+            if (l + 1 <= delta)
             {
-                left = 2 * l;
+                left = 2 * l + 1;
                 right = 0;
             }
             else
             {
                 left = l + delta;
-                right = l - delta;
+                right = l - delta + 1;
             }
         }
         printf((isok) ? "YES\n" : "NO\n");
