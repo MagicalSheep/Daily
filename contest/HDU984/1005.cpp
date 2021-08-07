@@ -27,9 +27,6 @@ ll Eratosthenes(ll n)
 
 int main()
 {
-    int a = 2 ^ 56 ^ 4 ^ 5;
-    int b = (2 ^ 56) ^ (4 ^ 5);
-    cout << a << " " << b << endl;
     Eratosthenes(10000002);
     scanf("%lld", &t);
     while (t--)
