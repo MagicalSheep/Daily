@@ -158,7 +158,13 @@ struct element
     ll ans1, ans2;
 } E[MAXN];
 
-bool cmp1(element a, element b) { return a.t < b.t; }
+bool cmp1(element a, element b)
+{
+    if (a.t == b.t)
+        return a.id < b.id;
+    else
+        return a.t < b.t;
+}
 bool cmp2(element a, element b) { return a.val < b.val; }
 bool cmp3(element a, element b) { return a.id < b.id; }
 bool cmp4(element a, element b) { return a.t > b.t; }
@@ -217,7 +223,6 @@ void solve2(int l, int r)
 
 int main()
 {
-    // freopen("C:\\Users\\CSUACM29\\Downloads\\P3157_1.in", "r", stdin);
     cin >> n >> m;
     for (int i = 1; i <= n; i++)
         cin >> E[i].val, E[i].id = i, rnk[E[i].val] = i;
@@ -231,6 +236,15 @@ int main()
     solve(1, n);
     sort(E + 1, E + 1 + n, cmp1);
     solve2(1, n);
+    sort(E + 1, E + 1 + n, cmp1);
+    for (int i = 1; i <= n; i++)
+    {
+        if (E[i].t != 0)
+            break;
+        add(E[i].val, 1);
+        ans[0] += (getsum(n) - getsum(E[i].val));
+    }
+    memset(tr, 0, sizeof(tr));
     sort(E + 1, E + 1 + n, cmp4);
     for (int i = 1; i <= m; i++)
         ans[m - i + 1] = E[i].ans1 + E[i].ans2;
