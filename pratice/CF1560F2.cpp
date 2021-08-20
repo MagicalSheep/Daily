@@ -168,19 +168,14 @@ bool dfs(int ind, int *num, int len, bool isok)
         if (new_num_len != len)
             vis[n[ind] - '0'] = false;
 
-        if (n[ind] != '9')
-        {
-            for (int i = 0; i < len; i++)
-                new_num[i] = num[i];
-            if (vis[n[ind] - '0' + 1])
-                new_num[len] = 0;
-            else
-                new_num[len] = n[ind] - '0' + 1;
-            ans[ind] = n[ind] + 1;
-            if (dfs(ind + 1, new_num, len + 1, true))
-                return true;
-        }
-        return false;
+        for (int i = 0; i < len; i++)
+            new_num[i] = num[i];
+        if (vis[n[ind] - '0' + 1])
+            new_num[len] = 0;
+        else
+            new_num[len] = n[ind] - '0' + 1;
+        ans[ind] = n[ind] + 1;
+        return dfs(ind + 1, new_num, len + 1, true);
     }
 
     sort(num, num + len);
