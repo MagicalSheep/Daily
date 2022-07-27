@@ -1,32 +1,35 @@
 #include <bits/stdc++.h>
 typedef long long ll;
 using namespace std;
-const int MAXN = 2e5 + 5;
+const int MAXN = 6e5 + 5;
+const ll MOD1 = 1e9 + 7;
+const ll MOD2 = 998244353;
+const ll b = 114514;
+
+ll b1[MAXN], b2[MAXN];
+
+void init()
+{
+    b1[1] = b2[1] = b;
+    for (ll i = 2; i < MAXN; i++)
+    {
+        b1[i] = (b1[i - 1] * b) % MOD1;
+        b2[i] = (b2[i - 1] * b) % MOD2;
+    }
+}
 
 struct SHASH
 {
-    const ll MOD1 = 1e9 + 7;
-    const ll MOD2 = 998244353;
-    const ll b = 114514;
+    ll f1[MAXN], f2[MAXN], slen;
 
-    ll b1[MAXN], b2[MAXN], f1[MAXN], f2[MAXN], slen;
-    char *s;
-
-    void init(char *str)
+    void init(char *s, ll len)
     {
-        s = str;
-        slen = strlen(s);
-        b1[1] = b2[1] = b;
-        for (ll i = 2; i < MAXN; i++)
-        {
-            b1[i] = (b1[i - 1] * b) % MOD1;
-            b2[i] = (b2[i - 1] * b) % MOD2;
-        }
-        f1[1] = f2[1] = s[0];
+        slen = len;
+        f1[1] = f2[1] = s[1];
         for (ll i = 2; i <= slen; i++)
         {
-            f1[i] = ((f1[i - 1] * b) % MOD1 + s[i - 1]) % MOD1;
-            f2[i] = ((f2[i - 1] * b) % MOD2 + s[i - 1]) % MOD2;
+            f1[i] = ((f1[i - 1] * b) % MOD1 + s[i]) % MOD1;
+            f2[i] = ((f2[i - 1] * b) % MOD2 + s[i]) % MOD2;
         }
         return;
     }
@@ -47,8 +50,10 @@ SHASH sh;
 
 int main()
 {
-    scanf("%s", s);
-    sh.init(s);
+    init();
+    scanf("%s", s + 1);
+    // start from one
+    sh.init(s, strlen(s + 1));
     printf("%lld\n%lld\n", sh.hash1(1, 3), sh.hash1(4, 6));
     printf("%lld\n%lld\n", sh.hash2(1, 3), sh.hash2(4, 6));
     return 0;
