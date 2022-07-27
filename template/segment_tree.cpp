@@ -1,31 +1,46 @@
 #include <bits/stdc++.h>
+typedef long long ll;
 using namespace std;
 
+// test variable begin
+const int MAXN = 1e5 + 10;
+int n, m;
+ll a[MAXN];
+// test variable end
+
 /** Segment Tree Begin **/
-template <typename T>
-class SegTree
+struct SegTree
 {
-private:
-    int siz; // tree size
-    T *a;    // source data
     struct node
     {
         int l, r;
         // data you want to operate
 
         /** Example Begin **/
-        T mx, sum, add;
+        ll mx, sum, add;
         /** Example End **/
-    } * tree;
 
-    // Merge function
-    void pushup(int p)
-    {
-        /** Example Begin **/
-        tree[p].sum = tree[p << 1].sum + tree[p << 1 | 1].sum;
-        tree[p].mx = max(tree[p << 1].mx, tree[p << 1 | 1].mx);
-        /** Example End **/
-    }
+        // Merge function
+        node operator+(node &x)
+        {
+            node ret;
+            ret.l = ret.r = ret.mx = ret.sum = ret.add = 0;
+
+            if (l == 0)
+                return x;
+            else if (x.l == 0)
+                return *this;
+
+            ret.l = l, ret.r = x.r;
+
+            /** Example Begin **/
+            ret.sum = sum + x.sum;
+            ret.mx = max(mx, x.mx);
+            /** Example End **/
+
+            return ret;
+        }
+    } tree[MAXN << 2];
 
     void pushdown(int p)
     {
@@ -43,32 +58,26 @@ private:
         /** Example End **/
     }
 
-public:
-    SegTree(int max_size) { tree = (node *)calloc(max_size << 2, sizeof(node)); }
-    SegTree(int max_size, T *arr) { tree = (node *)calloc(max_size << 2, sizeof(node)), this->a = arr; }
-
     void build(int p, int s, int t)
     {
         tree[p].l = s, tree[p].r = t;
-        /** Example Begin **/
-        tree[p].add = 0;
-        /** Example End **/
         if (s == t)
         {
             // initialization
 
             /** Example Begin **/
+            tree[p].add = 0;
             tree[p].mx = tree[p].sum = a[s];
             /** Example End **/
             return;
         }
         int mid = (s + t) >> 1;
         build(p << 1, s, mid), build(p << 1 | 1, mid + 1, t);
-        pushup(p);
+        tree[p] = tree[p << 1] + tree[p << 1 | 1];
     }
 
     // Section update
-    void update(int p, int s, int t, T x)
+    void update(int p, int s, int t, ll x)
     {
         if (tree[p].l >= s && tree[p].r <= t)
         {
@@ -85,43 +94,37 @@ public:
             update(p << 1, s, t, x);
         if (t > mid)
             update(p << 1 | 1, s, t, x);
-        pushup(p);
+        tree[p] = tree[p << 1] + tree[p << 1 | 1];
     }
 
-    // Section query
-    T query(int p, int s, int t)
+    // Section query - node
+    node query(int p, int s, int t)
     {
         if (tree[p].l >= s && tree[p].r <= t)
-            return tree[p].sum; // Example
+            return tree[p];
         pushdown(p);
         int mid = (tree[p].l + tree[p].r) >> 1;
-        T sum = 0;
+        node res1, res2;
+        res1.l = res1.r = res2.l = res2.r = 0;
         if (s <= mid)
-            sum = query(p << 1, s, t);
+            res1 = query(p << 1, s, t);
         if (t > mid)
-            sum += query(p << 1 | 1, s, t);
-        return sum;
+            res2 = query(p << 1 | 1, s, t);
+        return res1 + res2;
     }
 };
 /** Segment Tree End **/
 
-// test variable begin
-const int MAXN = 1e5 + 10;
-int n, m;
-long long a[MAXN];
-// test variable end
+SegTree tree;
 
 int main()
 {
     scanf("%d%d", &n, &m);
     for (int i = 1; i <= n; i++)
         scanf("%lld", &a[i]);
-
-    SegTree<long long> tree(MAXN, a);
     tree.build(1, 1, n);
-
     int o, x, y;
-    long long k;
+    ll k;
     while (m--)
     {
         scanf("%d", &o);
@@ -133,7 +136,7 @@ int main()
         else
         {
             scanf("%d%d", &x, &y);
-            printf("%lld\n", tree.query(1, x, y));
+            printf("%lld\n", tree.query(1, x, y).sum);
         }
     }
     return 0;
